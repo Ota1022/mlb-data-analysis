@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-
+import csv
 # リーグの選択(True:A_league False:N_league)
 AorN = False
 # 年度を選択
@@ -47,7 +47,7 @@ for season in range(2011, 2023):
     ]
     csv_writer.writerow(header)
     # top100を選択
-    for page in range(1, 5):
+    for page in range(1, 4):
         if page == 1:
             url = "https://www.mlb.com/stats/" + league_name + "/hits/" + str(season)
             rank = 0
@@ -116,7 +116,7 @@ for season in range(2011, 2023):
                 float(table_new[5].replace("'", "")) * 30.48
                 + float(table_new[6].replace('"', "")) * 2.54
             )
-            age = table_new[10]
+            age = int(table_new[10])-(2023-season)
             position = table_new[0]
             bt = table_new[3]
             weight = float(table_new[7].replace("LBS", "")) * 453.6 / 1000
