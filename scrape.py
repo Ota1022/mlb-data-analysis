@@ -2,18 +2,29 @@ import requests
 from bs4 import BeautifulSoup
 #年度を選択
 season = 2019
-csv_file = open('A_league_'+str(season)+'.csv', 'w', newline='')
+#リーグの選択(True:A_league False:N_league)
+AorN = False
+
+
+if AorN :
+    league_name = "american-league"
+    csv_file = open('A_league_'+str(season)+'.csv', 'w', newline='')
+else:
+    league_name = "national-league"
+    csv_file = open('N_league_'+str(season)+'.csv', 'w', newline='')
+
+
 csv_writer = csv.writer(csv_file)
 
     
 header = ["順位", "選手名","Date","Home Tm","Away Tm","PA","AB","R","H","2B","3B","HR","RBI","BB","SO","SB","CS","HBP","AVG","OBP","SLG","OPS"]
 csv_writer.writerow(header)
-for page in range(1,4):
+for page in range(1,2):
     if page ==1:
-        url ='https://www.mlb.com/stats/american-league/hits/'+str(season)
+        url ='https://www.mlb.com/stats/'+league_name+'/hits/'+str(season)
         rank = 0
     else:
-        url ='https://www.mlb.com/stats/american-league/hits/'+str(season)+'?page='+str(page)
+        url ='https://www.mlb.com/stats/'+league_name+'/hits/'+str(season)+'?page='+str(page)
         rank = (page-1)*25
 
     response = requests.get(url)
