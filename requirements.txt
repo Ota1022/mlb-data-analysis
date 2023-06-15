@@ -12,3 +12,9 @@ sympy
 tensorflow
 selenium
 beautifulsoup4
+japanize-matplotlib
+missingno
+datetime
+optuna
+xgboost
+lightgbm
