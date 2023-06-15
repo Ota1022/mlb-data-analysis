@@ -1,0 +1,14 @@
+sklearn
+pandas
+matplotlib
+numexpr
+numpy
+pillow
+seaborn
+psutil
+scikit-learn
+scipy
+sympy
+tensorflow
+selenium
+beautifulsoup4
