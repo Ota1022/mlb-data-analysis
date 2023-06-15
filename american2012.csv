@@ -2200,7 +2200,6 @@ Rank,Name,Date,Team,OPP,AB,R,H,TB,2B,3B,HR,RBI,BB,IBB,SO,SB,CS,AVG,OBP,SLG,HBP,S
 14,Joe Mauer,Oct 1,MIN,@ TOR,5,0,1,1,0,0,0,1,0,0,1,0,0,0.322,0.416,0.45,0,0,0
 14,Joe Mauer,Oct 2,MIN,@ TOR,3,0,0,0,0,0,0,0,1,0,1,0,0,0.32,0.415,0.448,0,0,0
 14,Joe Mauer,Oct 3,MIN,@ TOR,2,0,0,0,0,0,0,0,2,0,0,0,0,0.319,0.416,0.446,0,0,0
-15,Albert Pujols,,,,,,,,,,,,,,,,,,,,,,
 16,Shin-Soo Choo,Apr 5,CLE,vs TOR,4,0,1,1,0,0,0,0,2,0,0,0,1,0.25,0.571,0.25,1,0,0
 16,Shin-Soo Choo,Apr 7,CLE,vs TOR,5,0,0,0,0,0,0,0,0,0,0,0,0,0.111,0.333,0.111,0,0,0
 16,Shin-Soo Choo,Apr 8,CLE,vs TOR,4,1,1,1,0,0,0,0,0,0,1,0,0,0.154,0.313,0.154,0,0,0
@@ -6870,8 +6869,6 @@ Rank,Name,Date,Team,OPP,AB,R,H,TB,2B,3B,HR,RBI,BB,IBB,SO,SB,CS,AVG,OBP,SLG,HBP,S
 48,Curtis Granderson,Aug 28,NYY,vs TOR,2,0,0,0,0,0,0,1,0,0,1,0,0,0.235,0.328,0.48,0,0,1
 48,Curtis Granderson,Aug 29,NYY,vs TOR,4,0,1,2,1,0,0,3,0,0,0,0,0,0.235,0.327,0.481,0,0,0
 48,Curtis Granderson,Aug 31,NYY,vs BAL,4,1,1,4,0,0,1,1,0,0,1,0,0,0.235,0.327,0.485,0,0,0
-48,Curtis Granderson,August,-,-,97,12,19,41,4,0,6,20,10,1,31,0,0,0.196,0.27,0.423,1,0,3
-48,Curtis Granderson,Date,Team,OPP,AB,R,H,TB,2B,3B,HR,RBI,BB,IBB,SO,SB,CS,AVG,OBP,SLG,HBP,SAC,SF
 48,Curtis Granderson,Sep 1,NYY,vs BAL,1,0,0,0,0,0,0,0,0,0,1,0,0,0.235,0.326,0.484,0,0,0
 48,Curtis Granderson,Sep 3,NYY,@ TB,1,0,0,0,0,0,0,0,0,0,1,0,0,0.234,0.326,0.483,0,0,0
 48,Curtis Granderson,Sep 4,NYY,@ TB,3,0,0,0,0,0,0,0,0,0,1,0,0,0.233,0.325,0.48,1,0,0
