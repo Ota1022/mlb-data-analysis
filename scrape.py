@@ -91,8 +91,6 @@ for season in range(2011, 2023):
             )
             url_year = (
                 "https://www.mlb.com/player/"
-                + str.lower("-".join(player_name.replace(".", "").split(" ")))
-                + "-"
                 + player_id
                 + "?stats=gamelogs-r-hitting-mlb&year=2019"
             )
