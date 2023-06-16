@@ -1,12 +1,14 @@
-import csv
-
 import requests
+import csv
 from bs4 import BeautifulSoup
 
 # リーグの選択(True:A_league False:N_league)
 AorN = False
 # 年度を選択
-for season in range(2011, 2023):
+StartSeason = 2011
+EndSeason = 2023
+
+for season in range(StartSeason, EndSeason+1):
     if AorN:
         league_name = "american-league"
         csv_file = open("A_league_" + str(season) + ".csv", "w", newline="")
@@ -17,39 +19,41 @@ for season in range(2011, 2023):
     csv_writer = csv.writer(csv_file)
 
     header = [
-        "順位",
-        "選手名",
-        "age",
-        "debut_year",
-        "tall",
-        "weight",
-        "pro_year",
-        "position",
-        "bt",
-        "Date",
-        "Home Tm",
-        "Away Tm",
-        "PA",
-        "AB",
-        "R",
-        "H",
-        "2B",
-        "3B",
-        "HR",
-        "RBI",
-        "BB",
-        "SO",
-        "SB",
-        "CS",
-        "HBP",
-        "AVG",
-        "OBP",
-        "SLG",
-        "OPS",
+        "順位", #rank
+        "選手名",#name
+        "age",#年齢
+        "debut_year",#デビュー
+        "tall",#身長
+        "weight",#体重
+        "pro_year",#ドラフト
+        "position",#ポジション
+        "bt",#利き打ち/投げ
+        "Date",#試合日
+        "Home Tm",#ホームグラウンド
+        "Away Tm",#ビジターグラウンド
+        "PA",#打席数
+        "AB",#打数
+        "R",#得点
+        "H",#安打
+        "2B",#２塁打
+        "3B",#３塁打
+        "HR",#本塁打
+        "RBI",#打点
+        "BB",#四球
+        "SO",#三振
+        "SB",#盗塁
+        "CS",#盗塁失敗
+        "HBP",#死球
+        "AVG",#打率
+        "OBP",#出塁率
+        "SLG",#長打率
+        "OPS",#打撃指標数
+        "SS", #SprintSpeed
+        "HP2F"#HP to First
     ]
     csv_writer.writerow(header)
-    # top100を選択
-    for page in range(1, 4):
+    # top100を選択(1ページ当たり25名)
+    for page in range(1, 5):
         if page == 1:
             url = "https://www.mlb.com/stats/" + league_name + "/hits/" + str(season)
             rank = 0
@@ -91,10 +95,9 @@ for season in range(2011, 2023):
             )
             url_year = (
                 "https://www.mlb.com/player/"
-                + str.lower("-".join(player_name.replace(".", "").split(" ")))
-                + "-"
                 + player_id
-                + "?stats=gamelogs-r-hitting-mlb&year=2019"
+                + "?stats=gamelogs-r-hitting-mlb&year="
+                +str(season)
             )
             response_year = requests.get(url_year)
             soup_year = BeautifulSoup(response_year.content, "html.parser")
@@ -103,7 +106,38 @@ for season in range(2011, 2023):
             for year in tables_year.text.split("\n"):
                 if "Debut" in year:
                     debut_year = year.split(":")[-1]
+        
 
+            if season >2014 :
+                url_ss = (
+                            "https://baseballsavant.mlb.com/savant-player/"
+                            + str.lower("-".join(player_name.replace(".", "").split(" ")))
+                            + "-"
+                            + player_id
+                            + "?stats=statcast-r-running-mlb") 
+                response_ss = requests.get(url_ss)
+                soup_ss = BeautifulSoup(response_ss.content,"html.parser" )
+                div =soup_ss.find('div',{"id":"statcastRunning"})           
+                tables_ss = div.find("div",{"class":"table-savant"}).find("tbody")
+
+                trr = tables_ss.find_all('tr')
+                for i in range(0,len(trr)):
+                    if trr[i].text.split('\n')[1] ==" " +str(season):
+                        sprintspeed_row = trr[i].text.split('\n')[3].split(" ")[1]
+                        if sprintspeed_row == '':
+                            sprintspeed = None
+                        else:
+                            sprintspeed = float(sprintspeed_row)
+                        hp2f_row = trr[i].text.split('\n')[4].split(" ")[1]
+                        if hp2f_row == '':
+                            hp2f = None
+                        else:
+                            hp2f = float(hp2f_row)
+            else:
+                sprintspeed = None
+                hp2f = None        
+            
+                
             # Send a GET request to the webpage
             url = player_url
             response = requests.get(url)
@@ -118,7 +152,7 @@ for season in range(2011, 2023):
                 float(table_new[5].replace("'", "")) * 30.48
                 + float(table_new[6].replace('"', "")) * 2.54
             )
-            age = int(table_new[10]) - (2023 - season)
+            age = table_new[10]
             position = table_new[0]
             bt = table_new[3]
             weight = float(table_new[7].replace("LBS", "")) * 453.6 / 1000
@@ -141,7 +175,7 @@ for season in range(2011, 2023):
                 if not (data[0].startswith("2")):
                     continue
                 row_data = [
-                    rank,  # 順位
+                    rank, 
                     player_name,
                     age,
                     debut_year,
@@ -151,16 +185,16 @@ for season in range(2011, 2023):
                     position,
                     bt,
                     data[0].strip(),
-                    data[1].strip(),  # 自チーム
-                    data[2].strip(),  # 相手チーム
-                    data[3].strip(),  # 打席数
-                    data[4].strip(),  # 打数
-                    data[5].strip(),  # 安打数
-                    data[6].strip(),  # 打点
-                    data[7].strip(),  # 本塁打
-                    data[8].strip(),  # 四球
-                    data[9].strip(),  # 盗塁
-                    data[10].strip(),  # 出塁率
+                    data[1].strip(),  
+                    data[2].strip(),  
+                    data[3].strip(),  
+                    data[4].strip(),  
+                    data[5].strip(),  
+                    data[6].strip(),  
+                    data[7].strip(),  
+                    data[8].strip(),  
+                    data[9].strip(),  
+                    data[10].strip(),  
                     data[11].strip(),
                     data[12].strip(),
                     data[13].strip(),
@@ -170,6 +204,8 @@ for season in range(2011, 2023):
                     data[17].strip(),
                     data[18].strip(),
                     data[19].strip(),
+                    sprintspeed,
+                    hp2f
                 ]
 
                 csv_writer.writerow(row_data)
