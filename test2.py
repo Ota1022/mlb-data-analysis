@@ -32,10 +32,8 @@ american2013["Year"] = 2013
 american2014["Year"] = 2014
 american2015["Year"] = 2015
 
-# Preprocess each yearly data
 data_frames = [american2011, american2012, american2013, american2014, american2015]
 
-# Create a dataframe with total hits per player per year for all years
 total_hits_all_years = (
     pd.concat(data_frames).groupby(["Year", "Name"])["H"].sum().reset_index()
 )
@@ -43,10 +41,8 @@ total_hits_all_years = (
 for i in range(len(data_frames)):
     data_frames[i]["Year"] = 2011 + i
     data_frames[i]["Game_ID"] = data_frames[i].groupby(["Name"]).cumcount() + 1
-    data_frames[i] = data_frames[i][
-        data_frames[i]["Game_ID"] <= 60
-    ]  # Select the first 60 games for each player
-    # Sum up the stats for the first 60 games
+    data_frames[i] = data_frames[i][data_frames[i]["Game_ID"] <= 60]
+
     data_frames[i] = (
         data_frames[i]
         .groupby(["Year", "Name"])
@@ -62,11 +58,9 @@ for i in range(len(data_frames)):
         )
         .reset_index()
     )
-    # Map the total hits for the year from the total_hits_all_years dataframe
     data_frames[i] = data_frames[i].merge(
         total_hits_all_years, on=["Year", "Name"], suffixes=("", "_total")
     )
-    # Drop the H column (we're going to predict H_total)
     data_frames[i] = data_frames[i].drop(columns="H")
 
 data_2011 = data_frames[0]
@@ -74,7 +68,6 @@ data_2013 = data_frames[2]
 data_2014 = data_frames[3]
 data_2015 = data_frames[4]
 
-# Model training for each year (excluding 2015)
 model_2011 = LinearRegression()
 model_2011.fit(
     data_2011.drop(columns=["Name", "Year", "H_total"]), data_2011["H_total"]
@@ -90,7 +83,6 @@ model_2014.fit(
     data_2014.drop(columns=["Name", "Year", "H_total"]), data_2014["H_total"]
 )
 
-# Predict for 2015
 X_test = data_2015.drop(columns=["Name", "Year", "H_total"])
 
 preds_2011 = model_2011.predict(X_test)
@@ -99,3 +91,53 @@ preds_2014 = model_2014.predict(X_test)
 
 final_preds = (preds_2011 + preds_2013 + preds_2014) / 3.0
 data_2015["Predicted_H_total"] = final_preds
+
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+models = [model_2011, model_2013, model_2014]
+years = [2011, 2013, 2014]
+data = [data_2011, data_2013, data_2014]
+
+for i, model in enumerate(models):
+    y_true = data[i]["H_total"]
+    y_pred = model.predict(data[i].drop(columns=["Name", "Year", "H_total"]))
+
+    mae = mean_absolute_error(y_true, y_pred)
+    mse = mean_squared_error(y_true, y_pred)
+    rmse = np.sqrt(mse)
+    r2 = r2_score(y_true, y_pred)
+
+    print(f"Model {years[i]} Evaluation:")
+    print(f"MAE: {mae}")
+    print(f"MSE: {mse}")
+    print(f"RMSE: {rmse}")
+    print(f"R^2: {r2}")
+    print("-------------------------")
+
+y_true_final = data_2015["H_total"]
+y_pred_final = data_2015["Predicted_H_total"]
+
+mae_final = mean_absolute_error(y_true_final, y_pred_final)
+mse_final = mean_squared_error(y_true_final, y_pred_final)
+rmse_final = np.sqrt(mse_final)
+r2_final = r2_score(y_true_final, y_pred_final)
+
+print("Final Model Evaluation:")
+print(f"MAE: {mae_final}")
+print(f"MSE: {mse_final}")
+print(f"RMSE: {rmse_final}")
+print(f"R^2: {r2_final}")
+print("-------------------------")
+
+plt.figure(figsize=(10, 8))
+plt.scatter(y_true_final, y_pred_final, color="blue")
+plt.plot(
+    [y_true_final.min(), y_true_final.max()],
+    [y_true_final.min(), y_true_final.max()],
+    "k--",
+    lw=4,
+)
+plt.xlabel("Actual")
+plt.ylabel("Predicted")
+plt.title("Actual vs. Predicted Total Hits for Year 2015")
+plt.show()
